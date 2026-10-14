@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, MapPin, Send, CheckCircle2, MessageSquare, PhoneCall } from 'lucide-react';
+import { Mail, MapPin, Send, CheckCircle2, MessageSquare, PhoneCall, AlertCircle } from 'lucide-react';
 import { bandData } from '../data/bandData';
 
 export default function Contact() {
@@ -11,15 +11,43 @@ export default function Contact() {
   });
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulación de envío o conexión con Web3Forms / mailto
-    setTimeout(() => {
+    setErrorMessage(null);
+
+    try {
+      const response = await fetch(bandData.contact.formEndpoint || 'https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          access_key: bandData.contact.accessKey,
+          name: formData.name,
+          email: formData.email,
+          subject: `[${bandData.name}] ${formData.type} - de ${formData.name}`,
+          motivo: formData.type,
+          message: formData.message,
+          from_name: `${bandData.name} Landing Page`,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSubmitted(true);
+      } else {
+        setErrorMessage(data.message || 'Hubo un problema al procesar el envío. Verifica tu clave o intenta más tarde.');
+      }
+    } catch (err) {
+      setErrorMessage('Error de conexión al enviar el mensaje. Revisa tu conexión a internet.');
+    } finally {
       setIsSubmitting(false);
-      setSubmitted(true);
-    }, 800);
+    }
   };
 
   const handleChange = (e) => {
@@ -129,6 +157,13 @@ export default function Contact() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
+                  {errorMessage && (
+                    <div className="p-4 bg-red-950/80 border border-red-600/80 flex items-start space-x-3 text-red-200 text-xs font-mono">
+                      <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+                      <span>{errorMessage}</span>
+                    </div>
+                  )}
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">

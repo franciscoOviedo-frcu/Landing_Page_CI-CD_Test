@@ -128,11 +128,11 @@ export const bandData = {
   contact: {
     emailBooking: "booking@ignisaeterna.com",
     emailPress: "prensa@ignisaeterna.com",
-    management: "contacto@ignisaeterna.com",
+    management: "", // Opcional: correo de management si aplica
     phone: "+54 9 11 0000-0000",
     location: "Buenos Aires, Argentina",
     // Para el formulario de contacto directo sin backend (usando Web3Forms o Formspree)
     formEndpoint: "https://api.web3forms.com/submit", // Reemplazable con la Access Key de Web3Forms
-    accessKey: "YOUR_WEB3FORMS_ACCESS_KEY" // El usuario puede obtener una gratis en web3forms.com en 1 minuto
+    accessKey: "a1594f9e-cc48-44c1-86d3-b9126f82cb70" // El usuario puede obtener una gratis en web3forms.com en 1 minuto
   }
 };
